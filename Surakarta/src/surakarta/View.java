@@ -22,7 +22,7 @@ public class View {
      * @param bg
      * @param bp 
      */
-    public void Show_Board(char[][] bg, Board_piece[] bp) {
+    public static void showBoard(char[][] bg) {
         String answer; //The user's resonse in a String object.
         
         int boardHeight; //The number of rows in the char array that represents the actual board to be displayed.
@@ -43,12 +43,7 @@ public class View {
         
         int row; //The row currently being printed out.
         
-        Scanner userInput;
-                
-        
-        for (index = 0; index < bp.length; index++) {
-            bg[bp[index].getBoard_piece_location_y()][bp[index].getBoard_piece_location_x()] = bp[index].getIcon();
-        }
+        Scanner userInput;                               
         
         String temp;
         
@@ -253,7 +248,7 @@ public class View {
      * @param boardWidth - The number of elements in the 2nd dimension of displayBoard. Used to ensure the length matches the length of 'line'.
      * @param boardRowIndex - The index to be used for the 1st dimension of displayBoard.
      */
-    private void putStringInBoard(char[][] displayBoard, String line, int boardWidth, int boardRowIndex) {
+    private static void putStringInBoard(char[][] displayBoard, String line, int boardWidth, int boardRowIndex) {
         int i;
         
         if (boardWidth < line.length() ) {
@@ -276,14 +271,29 @@ public class View {
      * @param number
      * @param tg 
      */
-    public void Display_Score(Player[] p, int number, int tg) {
+    public static void displayScore(Player[] p, int number, int tg) {
         
     }
     
+    public static int isTurnMoveOrCapture() {
+        return 0;
+    }
+    
+    public static int[] getTurnCoordinates() {
+        return new int[] {1, 2, 3, 4};
+    }
+    
+    public static void tellPlayerMoveInvalid() {
+        
+    }
+    
+    public static void tellPlayerCaptureInvalid() {
+        
+    }
+    
+    
     public static void main(String[] args) {
-        char[][] boardGame;
-        Board_piece[] boardPiece;
-        View self;
+        char[][] boardGame;                
         
         boardGame = new char[][]  { {'P','P','P','P','P','P'}, 
                                     {'P','P','P','P','P','P'},                                      
@@ -292,11 +302,7 @@ public class View {
                                     {'S','S','S','S','S','S'}, 
                                     {'S','S','S','S','S','S'} };
         
-        boardPiece = new Board_piece[5];
-        
-        self = new View();
-        
         System.out.println("Calling 'Show_Board'");
-        self.Show_Board(boardGame, boardPiece);
+        showBoard(boardGame);
     }
 }
