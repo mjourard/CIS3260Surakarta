@@ -8,7 +8,7 @@
  * @author Deon
  */
 
-public class Game_controller {
+public class GameController {
     
     public static final int TOTALROW = 6;
     public static final int TOTALCOLUMN = 6;
