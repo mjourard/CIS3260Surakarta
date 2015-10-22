@@ -166,7 +166,7 @@ public class GameController {
             }
         }
 
-        boardPieces = new BoardPieces[TOTALPIECES];
+        boardPieces = new BoardPiece[TOTALPIECES];
         
         int bpCounter = 0;
         for(int i = 0; i < totalRow; i++){
@@ -215,7 +215,7 @@ public class GameController {
         while(validation == -1){
             selection = View.isTurnMoveOrCapture();
             coords = View.getTurnCoordinates();
-
+            //if it's a capture
             if(selection == 0){
                 validation = validateMove(coords[0], coords[1], coords[2], coords[3]);
             }
@@ -224,23 +224,22 @@ public class GameController {
             }
         }
 
-        //performing the move once validated
-        if(selection == 0){
-            boardPieces[validation].setBoardPieceLocationX(coords[2]);
-            boardPieces[validation].setBoardPieceLocationY(coords[3]);
-            boardGrid[coords[0], coords[1]] = '+';
-            if(boardPieces[validation].getSide() == shell)
-                boardGrid[coords[2], coords[3]] = 'S';
-            else
-                boardGrid[coords[2], coords[3]] = 'P';
+        //performing the move/capture once validated
+        boardPieces[validation].setBoardPieceLocationX(coords[2]);
+        boardPieces[validation].setBoardPieceLocationY(coords[3]);
+        boardGrid[coords[0], coords[1]] = '+';
+        if(boardPieces[validation].getSide() == shell){
+            boardGrid[coords[2], coords[3]] = 'S';
+            //if it's a capture
+            if(selection != 0)
+                totalPebbles--;
         }
-
-        //performing the capture once validated
         else{
-
+            boardGrid[coords[2], coords[3]] = 'P';
+            //if it's a capture
+            if(selection !=0)
+                totalShells--;
         }
-
-
     }
 
     public int validateMove(int startingX, int startingY, int endingX, int endingY){
@@ -259,6 +258,9 @@ public class GameController {
                 desired = i;
         }
         
+        //if the side of the piece matches the current side
+        if(chosenPiece.getSide() != side)
+            return -1;
         //if the desired spot is taken, or the chosen piece does not actually have a piece
         if(desired != -1 || chosenPiece == -1)
             return -1;
@@ -275,7 +277,7 @@ public class GameController {
         return chosenPiece;
     } 
     
-    public boolean validateCapture(int startingX, int startingY, int endingX, int endingY){
+    public int validateCapture(int startingX, int startingY, int endingX, int endingY){
 
         int chosenPiece, desired, xLoc, yLoc;
 
@@ -303,8 +305,6 @@ public class GameController {
         //if the row is out of bounds
         if(endingY < 0 || endingY > 5)
             return -1;
-        
-
     }
 
     /**
