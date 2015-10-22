@@ -1,5 +1,7 @@
 package surakarta;
 
+import java.util.Scanner;
+
 /**
  *
  * @author Deon
@@ -214,10 +216,10 @@ public class GameController {
         int[] coords;
         //integer that stores the array element in boardPiece in the event that the desired move is valid
         int validation = -1;
-        
+
         selection = 0;
-        
-        coords = new int[] {-1, -1, -1, -1};
+
+        coords = new int[]{-1, -1, -1, -1};
 
         View.showBoard(boardGrid);
 
@@ -236,12 +238,12 @@ public class GameController {
                 if (validation == -1) {
                     View.tellPlayerCaptureInvalid();
                 }
-            }            
+            }
         }
 
         //performing the move once validated        
         boardPieces[validation].setRow(coords[2]);
-        boardPieces[validation].setColumn(coords[3]);            
+        boardPieces[validation].setColumn(coords[3]);
         boardGrid[coords[0]][coords[1]] = '+';
         if (boardPieces[validation].getSide() == Side.Shells) {
             boardGrid[coords[2]][coords[3]] = 'S';
@@ -261,20 +263,21 @@ public class GameController {
             }
         }
 
-
         //performing the capture once validated
-        
     }
 
     /**
-     * Applies game logic to the proposed passed in move to determine whether the move is allowed or not.
+     * Applies game logic to the proposed passed in move to determine whether
+     * the move is allowed or not.
+     *
      * @param startingRow The row of the piece being moved.
      * @param startingColumn The column of the piece being moved.
      * @param endingRow The destination row of the piece.
      * @param endingColumn The destination column of the piece.
-     * @return -1 if the move is not valid. If the move is valid, the ID of the piece being moved is returned.
+     * @return -1 if the move is not valid. If the move is valid, the ID of the
+     * piece being moved is returned.
      */
-    public int validateMove(int startingRow, int startingColumn, int endingRow, int endingColumn) {                        
+    public int validateMove(int startingRow, int startingColumn, int endingRow, int endingColumn) {
 
         int chosenPiece, desired, xLoc, yLoc;
 
@@ -634,11 +637,97 @@ public class GameController {
         }
 
         //if the game has a winner, update their score, display score, return their index
-        if (winner != -1) {            
+        if (winner != -1) {
             View.displayScore(this.player, gameNumber, totalGames);
             return winner;
         }
         return -1;
+    }
+
+    public static void main(String[] args) {
+
+        String userMenuChoice = "default";						//The players' menu choice 
+        String playerOneName;									//The name of player one
+        String playerTwoName;									//The name of player two
+        int totalGames;											//Number of total games the players want to play
+        Player playerOne;										//Player instance for player one						
+        Player playerTwo;										//Player instance for player two
+        GameController surakarta;								//Game controller instance for Surakarta
+        View surakartaBoard;									//View instance for Surakarta
+        Scanner userInput;										//Scanner
+
+        //Display greeting message
+        System.out.println("\n\t\t\t~~~~~~~~~~~~~~~~~~~~~~");
+        System.out.println("\t\t\tWELCOME TO SURAKARTA!");
+        System.out.println("\t\t\t~~~~~~~~~~~~~~~~~~~~~~\n");
+
+        System.out.println("Surakarta is an indonesian strategy board game made for 2 players to play.\n"
+                + "It is a turn based game that involves a uniquely designed board and 12 pieces\n"
+                + "per player which are represented as shells and pebbles.\n");
+
+        //Display Surakarta menu
+        System.out.println("----------------");
+        System.out.println("SURAKARTA MENU");
+        System.out.println("----------------");
+        System.out.println("(1) Play");
+        System.out.println("(q) Quit\n");
+
+        userInput = new Scanner(System.in);
+
+        //Loop until you get the correct user input
+        while ((!userMenuChoice.equalsIgnoreCase("quit"))
+                && (!userMenuChoice.equalsIgnoreCase("q"))
+                && (!userMenuChoice.equalsIgnoreCase("play"))
+                && (!userMenuChoice.equalsIgnoreCase("1"))) {
+
+            //Get the user input
+            userMenuChoice = userInput.nextLine();
+
+            //Play
+            if ((userMenuChoice.equalsIgnoreCase("play")) || (userMenuChoice.equalsIgnoreCase("1"))) {
+
+                //Create player one
+                System.out.println("Please enter Player 1 name: ");
+                playerOneName = userInput.nextLine();
+                //MODIFY HOW WE CALL ENUM
+                playerOne = new Player(playerOneName, 12, Side.Shells);
+
+				//Printing player one information
+				/*System.out.println("Player one information:");
+                 System.out.println("\t" + playerOne.getName());
+                 System.out.println("\t" + playerOne.getTotalAvailablePieces());
+                 System.out.println("\t" + playerOne.getSide());*/
+                //Create player two
+                System.out.println("Please enter Player 2 name: ");
+                playerTwoName = userInput.nextLine();
+                //MODIFY HOW WE CALL ENUM
+                playerTwo = new Player(playerTwoName, 12, Side.Pebbles);
+
+				//Printing player two information
+				/*System.out.println("Player one information:");
+                 System.out.println("\t" + playerTwo.getName());
+                 System.out.println("\t" + playerTwo.getTotalAvailablePieces());
+                 System.out.println("\t" + playerTwo.getSide());*/
+                System.out.println("Please enter the number of total games you want to play: ");
+                totalGames = userInput.nextInt();
+
+                //Could be constants for the size of the board grid
+                surakarta = new GameController(6, 6, 1, totalGames);
+                surakarta.resetBoardState();
+                
+                
+
+				//surakartaBoard = new View(surakarta.getBoardGrid, );  STOPPED HERE
+                //Continue with the play functionality in here....
+            } //Quit
+            else if ((userMenuChoice.equalsIgnoreCase("quit")) || (userMenuChoice.equalsIgnoreCase("q"))) {
+                System.out.println("Exiting Surakarta...");
+                System.out.println("Bye-bye!\n");
+            } //Invalid input
+            else {
+                System.err.println("Invalid choice: " + userMenuChoice);
+            }
+        }
     }
 
 }
