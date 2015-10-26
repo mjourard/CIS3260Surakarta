@@ -171,7 +171,7 @@ public class GameController {
 
         setBoardGridTotalRow(TOTALROW);
         setBoardGridTotalColumn(TOTALCOLUMN);
-        boardGrid = new char[totalRow][totalColumns];
+        this.boardGrid = new char[totalRow][totalColumns];
 
         for (int i = 0; i < totalRow; i++) {
             for (int j = 0; j < totalColumns; j++) {
@@ -189,25 +189,32 @@ public class GameController {
 
         int bpCounter = 0;
 
-        for (int i = 0; i < totalRow; i++) {
-            boardPieces[bpCounter] = new BoardPiece(bpCounter, Side.Shells, i, 0);
+        for (int i = 0; i < totalColumns; i++) {
+            boardPieces[bpCounter] = new BoardPiece(bpCounter, Side.Pebbles, 0, i);
             bpCounter++;
         }
-        for (int i = 0; i < totalRow; i++) {
-            boardPieces[bpCounter] = new BoardPiece(bpCounter, Side.Shells, i, 1);
+        for (int i = 0; i < totalColumns; i++) {
+            boardPieces[bpCounter] = new BoardPiece(bpCounter, Side.Pebbles, 1, i);
             bpCounter++;
         }
-        for (int i = 0; i < totalRow; i++) {
-            boardPieces[bpCounter] = new BoardPiece(bpCounter, Side.Pebbles, i, 4);
+        for (int i = 0; i < totalColumns; i++) {
+            boardPieces[bpCounter] = new BoardPiece(bpCounter, Side.Shells, 4, i);
             bpCounter++;
         }
-        for (int i = 0; i < totalRow; i++) {
-            boardPieces[bpCounter] = new BoardPiece(bpCounter, Side.Pebbles, i, 5);
+        for (int i = 0; i < totalColumns; i++) {
+            boardPieces[bpCounter] = new BoardPiece(bpCounter, Side.Shells, 5, i);
             bpCounter++;
         }
+        
+        this.totalShells = 12;
+        
+        this.totalPebbles = 12;
 
     }
 
+    /**
+     * Handles asking the player to make a move, as well as updating all the internal data to reflect the move made by the user.
+     */
     public void executePlayerTurn() {
 
         //integer that represents selection of move (0) or capture (1)
@@ -222,26 +229,31 @@ public class GameController {
         coords = new int[]{-1, -1, -1, -1};
 
         View.showBoard(boardGrid);
+        
+        /*System.out.println("Board Data:");
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                System.out.print("[" + boardGrid[i][j] + "]");
+            }
+            System.out.println("");
+        }*/
 
         //while loop that checks for validation on the move/ capture
         while (validation == -1) {
-            selection = View.isTurnMoveOrCapture();
+            selection = View.isTurnMoveOrCapture(this.turn);
             coords = View.getTurnCoordinates();
 
             if (selection == 0) {
-                validation = validateMove(coords[0], coords[1], coords[2], coords[3]);
-                if (validation == -1) {
-                    View.tellPlayerMoveInvalid();
-                }
+                System.out.println(Integer.toString(coords[0]) + ", " + Integer.toString(coords[1]) + ", " + Integer.toString(coords[2]) + ", " + Integer.toString(coords[3]));
+                validation = validateMove(coords[0], coords[1], coords[2], coords[3]);                
             } else {
-                validation = validateCapture(coords[0], coords[1], coords[2], coords[3]);
-                if (validation == -1) {
-                    View.tellPlayerCaptureInvalid();
-                }
+                validation = validateCapture(coords[0], coords[1], coords[2], coords[3]);                
             }
         }
 
-        //performing the move once validated        
+        System.out.println("validation = " + Integer.toString(validation));
+        //performing the move once validated
+        System.out.println("Setting coordinates of piece " + Integer.toString(validation) + " to row: " + Integer.toString(coords[2]) + ", column: "  + Integer.toString(coords[3]));
         boardPieces[validation].setRow(coords[2]);
         boardPieces[validation].setColumn(coords[3]);
         boardGrid[coords[0]][coords[1]] = '+';
@@ -261,6 +273,12 @@ public class GameController {
                     break;
                 }
             }
+            
+            if (turn == Side.Pebbles) {
+                totalShells--;
+            } else {
+                totalPebbles--;
+            }
         }
 
         //performing the capture once validated
@@ -279,38 +297,57 @@ public class GameController {
      */
     public int validateMove(int startingRow, int startingColumn, int endingRow, int endingColumn) {
 
-        int chosenPiece, desired, xLoc, yLoc;
+        int chosenPiece, desired, currentRow, currentColumn;
 
         chosenPiece = -1;
         desired = -1;
+        
+        //if the column is out of bounds
+        if (endingRow < 0 || endingRow > 5) {
+            throw new IllegalArgumentException("The endingRow parameter was out of bounds.");            
+        }
+        //if the row is out of bounds
+        if (endingColumn < 0 || endingColumn > 5) {
+            throw new IllegalArgumentException("The endingColumn parameter was out of bounds.");            
+        }
+        
+        System.out.println("boardPieces.length = " + Integer.toString(boardPieces.length));
 
         for (int i = 0; i < boardPieces.length; i++) {
-            xLoc = boardPieces[i].getColumn();
-            yLoc = boardPieces[i].getRow();
-            if (xLoc == startingRow && yLoc == startingColumn) {
+            
+            currentRow = boardPieces[i].getRow();
+            currentColumn = boardPieces[i].getColumn(); 
+            System.out.println("boardPiece " + Integer.toString(i) + " is at row: " + Integer.toString(currentRow) + ", column: " + Integer.toString(currentColumn));
+            if (currentRow == startingRow && currentColumn == startingColumn) {
                 chosenPiece = i;
             }
-            if (xLoc == endingRow && yLoc == endingColumn) {
+            if (currentRow == endingRow && currentColumn == endingColumn) {
                 desired = i;
             }
         }
 
         //if the desired spot is taken, or the chosen piece does not actually have a piece
-        if (desired != -1 || chosenPiece == -1) {
+        if (chosenPiece == -1) {
+            View.tellPlayerMoveInvalid(InvalidMoveReason.NoPieceSelected);
+            return -1;
+        }
+        
+        if (desired != -1) {
+            View.tellPlayerMoveInvalid(InvalidMoveReason.EndCoordinatesOccupied);
             return -1;
         }
         //if the desired column or row is more than 1 column or row away
         if (Math.abs(startingRow - endingRow) > 1 || Math.abs(startingColumn - endingColumn) > 1) {
+            View.tellPlayerMoveInvalid(InvalidMoveReason.EndCoordinatesOutOfRange);
             return -1;
         }
-        //if the column is out of bounds
-        if (endingRow < 0 || endingRow > 5) {
+        
+        //If the piece selected to move does not belong to the player whose turn it is
+        if (boardPieces[chosenPiece].getSide() != this.turn) {
+            View.tellPlayerMoveInvalid(InvalidMoveReason.OpponentsPieceSelected);
             return -1;
         }
-        //if the row is out of bounds
-        if (endingColumn < 0 || endingColumn > 5) {
-            return -1;
-        }
+        
 
         return chosenPiece;
     }
@@ -479,17 +516,25 @@ public class GameController {
 
         boolean sameRow;
 
-        if (!isIntersectionOccupied(startingRow, startingColumn) || !isIntersectionOccupied(endingRow, endingColumn)) {
+        if (!isIntersectionOccupied(startingRow, startingColumn)) {                            
+            View.tellPlayerCaptureInvalid(InvalidCaptureReason.NoPieceSelected);
+            return -1;
+        }
+        
+        if (!isIntersectionOccupied(endingRow, endingColumn)) {
+            View.tellPlayerCaptureInvalid(InvalidCaptureReason.NoOpponentsPieceSelected);
             return -1;
         }
 
         //Determine if the piece at the starting location is yours
         if (this.getSideOfPiece(startingRow, startingColumn) != this.turn) {
+            View.tellPlayerCaptureInvalid(InvalidCaptureReason.OpponentsPieceSelectedWithStartCoordinates);
             return -1;
         }
 
         //Determine if the piece at the end location is theirs
         if (this.getSideOfPiece(endingRow, endingColumn) == this.turn) {
+            View.tellPlayerCaptureInvalid(InvalidCaptureReason.FriendlyPieceSeleectedWithEndCoordinates);
             return -1;
         }
 
@@ -521,9 +566,11 @@ public class GameController {
         }
 
         if (!innerLoopAccess && !outerLoopAccess) {
+            View.tellPlayerCaptureInvalid(InvalidCaptureReason.NoLoopSequenceAvailableToReachEndCoordinates);
             return -1;
         }
 
+        System.out.println("Finished the initial checks, going through the recursive algorithm.");
         if (!sameColumn || (sameColumn && startingRow < endingRow)) {
 
             //Start the loop one move up to avoid hitting the capturing piece in the algorithm.
@@ -546,6 +593,7 @@ public class GameController {
             }
         }
 
+        System.out.println("Finished the initial checks, going through the recursive algorithm.");
         if (!sameColumn || (sameColumn && startingRow > endingRow)) {
 
             //Start the loop one move down to avoid hitting the capturing piece in the algorithm.
@@ -568,6 +616,7 @@ public class GameController {
             }
         }
 
+        System.out.println("Finished the initial checks, going through the recursive algorithm.");
         if (!sameRow || (sameRow && startingColumn > endingColumn)) {
 
             //Start the loop one move down to avoid hitting the capturing piece in the algorithm.
@@ -590,6 +639,7 @@ public class GameController {
             }
         }
 
+        System.out.println("Finished the initial checks, going through the recursive algorithm.");
         if (!sameRow || (sameRow && startingColumn < endingColumn)) {
 
             //Start the loop one move down to avoid hitting the capturing piece in the algorithm.
@@ -613,6 +663,8 @@ public class GameController {
                 return -1;
             }
         }
+        
+        System.out.println("Reached the end of the method somehow...");
         return -1;
     }
 
@@ -629,6 +681,7 @@ public class GameController {
         int winner = -1;
 
         //winner is pebbles player, and winner variable is set to the index of the pebbles player
+        System.out.println("totalShells = " + Integer.toString(totalShells) + ", totalPebbles = " + Integer.toString(totalPebbles));
         if (totalShells == 0) {
             winner = Side.Shells.ordinal();
         } //winner is shells player
@@ -714,9 +767,12 @@ public class GameController {
                 //Could be constants for the size of the board grid
                 surakarta = new GameController(6, 6, 1, totalGames);
                 surakarta.resetBoardState();
-                
-                
-
+                surakarta.turn = Side.Pebbles;
+                                
+                while (surakarta.isGameOver() == -1) {
+                    surakarta.executePlayerTurn();
+                    surakarta.turn = (surakarta.turn == Side.Pebbles) ? Side.Shells : Side.Pebbles;
+                }
 				//surakartaBoard = new View(surakarta.getBoardGrid, );  STOPPED HERE
                 //Continue with the play functionality in here....
             } //Quit

@@ -39,6 +39,8 @@ public class View {
                 
         char[][] displayBoard; //A #D char array that will represent every single cell that will printed out to the user.
         
+        String[] stringDisplayBoard;
+        
         int index; //An index for looping through the Board_piece array.
         
         int row; //The row currently being printed out.
@@ -54,126 +56,112 @@ public class View {
         dataRow = 0;
         
         displayBoard = new char[boardHeight][boardWidth];
+        
+        stringDisplayBoard = new String[29];
+        
+        for (int x = 0; x < 6; x++) {
+            for (int y = 0; y < 6; y++) {
+                System.out.print("[" + bg[x][y] + "]");
+            }
+            System.out.println("");
+        }
                        
-        temp = " ____________    ____________ ";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+        
+        stringDisplayBoard[boardRowIndex] = " ____________    ____________ ";
         boardRowIndex++; //set to 1
-        
-        temp = "|            |  |            |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|            |  |            |";
         boardRowIndex++; //set to 2
-        
-        temp = "|   ______   |  |   ______   |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|   ______   |  |   ______   |";
         boardRowIndex++; //set to 3
-        
-        temp = "|  |      |  |  |  |      |  |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|  |      |  |  |  |      |  |";
         boardRowIndex++; //set to 4
-        
-        temp = "|  |      |  |  |  |      |  |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|  |      |  |  |  |      |  |";        
         boardRowIndex++; //set to 5
-        
-        temp = "|  |      |  |  |  |      |  |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|  |      |  |  |  |      |  |";        
         boardRowIndex++; //set to 6
-        
-        temp = "|  |      |  |  |  |      |  |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|  |      |  |  |  |      |  |";        
         boardRowIndex++; //set to 7
-        
-        temp = "|  |   " + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "   |  |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|  |   " + bg[dataRow][0] + "--" + bg[dataRow][1] + "--" + bg[dataRow][2] + "--" + bg[dataRow][3] + "--" + bg[dataRow][4] + "--" + bg[dataRow][5] + "   |  |";        
         boardRowIndex++; //set to 8
         dataRow++; //set to 1
-        
-        temp = "|  |   |  |  |  |  |  |   |  |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|  |   |  |  |  |  |  |   |  |";        
         boardRowIndex++; //set to 9
-        
-        temp = "|  |   |  |  |  |  |  |   |  |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|  |   |  |  |  |  |  |   |  |";        
         boardRowIndex++; //set to 10
-        
-        temp = "|   ---" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "---   |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|   ---" + bg[dataRow][0] + "--" + bg[dataRow][1] + "--" + bg[dataRow][2] + "--" + bg[dataRow][3] + "--" + bg[dataRow][4] + "--" + bg[dataRow][5] + "---   |";        
         boardRowIndex++; //set to 11        
         dataRow++; //set to 2
-        
-        temp = "|      |  |  |  |  |  |      |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|      |  |  |  |  |  |      |";        
         boardRowIndex++; //set to 12
-        
-        temp = "|      |  |  |  |  |  |      |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|      |  |  |  |  |  |      |";        
         boardRowIndex++; //set to 13
         
-        temp = " ------"  + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] +  "------ ";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+        
+        stringDisplayBoard[boardRowIndex] = " ------"  + bg[dataRow][0] + "--" + bg[dataRow][1] + "--" + bg[dataRow][2] + "--" + bg[dataRow][3] + "--" + bg[dataRow][4] + "--" + bg[dataRow][5] +  "------ ";        
         boardRowIndex++; //set to 14
         dataRow++; //set to 3
         
-        temp = "       |  |  |  |  |  |       ";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+        
+        stringDisplayBoard[boardRowIndex] = "       |  |  |  |  |  |       ";        
         boardRowIndex++; //set to 15
-        
-        temp = "       |  |  |  |  |  |       ";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "       |  |  |  |  |  |       ";        
         boardRowIndex++; //set to 16
-        
-        temp = " ------" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "------ ";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = " ------" + bg[dataRow][0] + "--" + bg[dataRow][1] + "--" + bg[dataRow][2] + "--" + bg[dataRow][3] + "--" + bg[dataRow][4] + "--" + bg[dataRow][5] + "------ ";        
         boardRowIndex++; //set to 17
         dataRow++; //set to 4
-        
-        temp = "|      |  |  |  |  |  |      |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|      |  |  |  |  |  |      |";        
         boardRowIndex++; //set to 18
-        
-        temp = "|      |  |  |  |  |  |      |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|      |  |  |  |  |  |      |";        
         boardRowIndex++; //set to 19
         
-        temp = "|   ---" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "---   |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+        
+        stringDisplayBoard[boardRowIndex] = "|   ---" + bg[dataRow][0] + "--" + bg[dataRow][1] + "--" + bg[dataRow][2] + "--" + bg[dataRow][3] + "--" + bg[dataRow][4] + "--" + bg[dataRow][5] + "---   |";        
         boardRowIndex++; //set to 20
         dataRow++; // set to 5
         
-        temp = "|  |   |  |  |  |  |  |   |  |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
-        boardRowIndex++; //set to 21
         
-        temp = "|  |   |  |  |  |  |  |   |  |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+        stringDisplayBoard[boardRowIndex] = "|  |   |  |  |  |  |  |   |  |";        
+        boardRowIndex++; //set to 21
+                
+        stringDisplayBoard[boardRowIndex] = "|  |   |  |  |  |  |  |   |  |";        
         boardRowIndex++; //set to 22
         
-        temp = "|  |   " + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "--" + bg[dataRow][0] + "   |  |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+        
+        stringDisplayBoard[boardRowIndex] = "|  |   " + bg[dataRow][0] + "--" + bg[dataRow][1] + "--" + bg[dataRow][2] + "--" + bg[dataRow][3] + "--" + bg[dataRow][4] + "--" + bg[dataRow][5] + "   |  |";       
         boardRowIndex++; //set to 23        
-        
-        temp = "|  |      |  |  |  |      |  |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|  |      |  |  |  |      |  |";        
         boardRowIndex++; //set to 24
-        
-        temp = "|  |      |  |  |  |      |  |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|  |      |  |  |  |      |  |";        
         boardRowIndex++; //set to 25
-        
-        temp = "|  |      |  |  |  |      |  |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|  |      |  |  |  |      |  |";        
         boardRowIndex++; //set to 26
-        
-        temp = "|  |______|  |  |  |______|  |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|  |______|  |  |  |______|  |";        
         boardRowIndex++; //set to 27
-        
-        temp = "|            |  |            |";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|            |  |            |";        
         boardRowIndex++; //set to 28
-        
-        temp = "|____________|  |____________|";
-        putStringInBoard(displayBoard, temp, boardWidth, boardRowIndex);
+                
+        stringDisplayBoard[boardRowIndex] = "|____________|  |____________|";        
         boardRowIndex++; //set to 29                        
         
         column = 0;
@@ -185,58 +173,29 @@ public class View {
         System.out.println("       A  B  C  D  E  F       ");
         
         for (row = 0; row < boardHeight; row++) {
+            System.out.print(stringDisplayBoard[row]);
+            if (row+1 > 7 && row+1 < 24) {
+                if ( (row+1 - 2) % 3 == 0) {
+                    System.out.print(" " + Integer.toString(dataRow));
+                    dataRow++;
+                }
+            }             
+            System.out.println("");            
+        }
+        
+        /*for (row = 0; row < boardHeight; row++) {
             for (column = 0; column < boardWidth; column++) {
                 System.out.print(displayBoard[row][column]);
             }
-            if (row > 7 && row < 21) {
-                if ( (row - 2) % 3 == 0) {
-                    System.out.println(" " + Integer.toString(dataRow + 1));
+            if (row+1 > 7 && row+1 < 24) {
+                if ( (row+1 - 2) % 3 == 0) {
+                    System.out.print(" " + Integer.toString(dataRow));
                     dataRow++;
                 }
-            }
-            
-        }
+            }             
+            System.out.println("");            
+        }*/
         
-        
-        userInput = new Scanner(System.in);
-        
-        answer = "";
-        //Ask the user if they want to move or capture
-        while (answer.length() != 1) {
-            System.out.println("Would you like to (M)ove or (C)apture?");
-            answer = userInput.nextLine().toUpperCase();
-            
-            if (answer.length() != 1) {
-                System.out.println("Invalid input, only one character is required to enter. Press 'M' to move or 'C' to capture.");
-            } else if (!answer.equals("M") && !answer.equals("C")) {
-                System.out.println("Invalid input, press 'M' to Move one of your pieces, or 'C' to Capture one of the opponent's pieces with your piece.");
-                answer = "";
-            }
-        }
-        
-        //Ask user what piece they'd like to move/capture with
-        if (answer.equals("M")) {
-            captureMode = false;            
-        } else {
-            captureMode = true;            
-        }
-               
-        while (answer.length() != 2) {
-            if (captureMode) {
-                System.out.println("Enter the current coordinates of the piece you'd like to move. E.g. A1, B6 or E3");
-            } else {
-                System.out.println("Enter the current coordinates of the piece you'd like to capture with. E.g. A1, B6 or E3");
-            }
-            
-            answer = userInput.next().toUpperCase();
-            
-            if (answer.length() != 2) {
-                System.out.println("Invalid input. Ensure you're only entering two characters. The first will be a letter, either A,B,C,D,E or F. The second will be a number from 1 to 6.");
-            } else if ( (answer.charAt(0) < 'A' || answer.charAt(0) > 'F') || (answer.charAt(1) < '1' || answer.charAt(1) > '6') ){                
-                System.out.println("Illegal character(s). Ensure the first is either A,B,C,D,E or F. Ensure the second is either 1,2,3,4,5 or 6.");                                    
-                answer = "";
-            }
-        }
         
         
     }
@@ -275,20 +234,140 @@ public class View {
         
     }
     
-    public static int isTurnMoveOrCapture() {
-        return 0;
+    /**
+     * 
+     * @return 
+     */
+    public static int isTurnMoveOrCapture(Side turn) {
+        
+        Scanner userInput;
+        
+        String answer;
+        
+        userInput = new Scanner(System.in);
+        
+        answer = "";
+        //Ask the user if they want to move or capture
+        while (answer.length() != 1) {
+            if (turn == Side.Pebbles) {
+                System.out.println(Side.Pebbles.toString() + " player, would you like to (M)ove or (C)apture?");
+            } else {
+                System.out.println(Side.Shells.toString() + " player, would you like to (M)ove or (C)apture?");
+            }
+            
+            answer = userInput.nextLine().toUpperCase();
+            
+            if (answer.length() != 1) {
+                System.out.println("Invalid input, only one character is required to enter. Press 'M' to move or 'C' to capture.");
+            } else if (!answer.equals("M") && !answer.equals("C")) {
+                System.out.println("Invalid input, press 'M' to Move one of your pieces, or 'C' to Capture one of the opponent's pieces with your piece.");
+                answer = "";
+            }
+        }
+        
+        if (answer.equals("M")) {
+            return 0;
+        } else {
+            return 1;
+        }        
     }
     
     public static int[] getTurnCoordinates() {
-        return new int[] {1, 2, 3, 4};
+        String answer;
+        
+        int[] returnIntArray;
+        
+        Scanner userInput;
+        
+        userInput = new Scanner(System.in);
+        
+        answer = "";
+        
+        returnIntArray = new int[4];
+        
+        while (answer.length() != 2) {            
+            System.out.println("Enter the current coordinates of the piece you'd like to move. E.g. A1, B6 or E3");
+            
+            answer = userInput.next().toUpperCase();
+            
+            if (answer.length() != 2) {
+                System.out.println("Invalid input. Ensure you're only entering two characters. The first will be a letter, either A,B,C,D,E or F. The second will be a number from 1 to 6.");
+            } else if ( (answer.charAt(0) < 'A' || answer.charAt(0) > 'F') || (answer.charAt(1) < '1' || answer.charAt(1) > '6') ){                
+                System.out.println("Illegal character(s). Ensure the first is either A,B,C,D,E or F. Ensure the second is either 1,2,3,4,5 or 6.");                                    
+                answer = "";
+            }
+        }
+        
+        returnIntArray[1] = answer.charAt(0) - 'A';
+        
+        returnIntArray[0] = answer.charAt(1) - '1';
+        
+        answer = "";
+        
+        while (answer.length() != 2) {            
+            System.out.println("Enter the current coordinates you'd like your piece to move to/capture at. E.g. A1, B6 or E3");
+            
+            answer = userInput.next().toUpperCase();
+            
+            if (answer.length() != 2) {
+                System.out.println("Invalid input. Ensure you're only entering two characters. The first will be a letter, either A,B,C,D,E or F. The second will be a number from 1 to 6.");
+            } else if ( (answer.charAt(0) < 'A' || answer.charAt(0) > 'F') || (answer.charAt(1) < '1' || answer.charAt(1) > '6') ){                
+                System.out.println("Illegal character(s). Ensure the first is either A,B,C,D,E or F. Ensure the second is either 1,2,3,4,5 or 6.");                                    
+                answer = "";
+            }
+        }
+        
+        returnIntArray[3] = answer.charAt(0) - 'A';
+        
+        returnIntArray[2] = answer.charAt(1) - '1';
+        
+        return returnIntArray;
     }
     
-    public static void tellPlayerMoveInvalid() {
+    public static void tellPlayerMoveInvalid(InvalidMoveReason reason) {
+        switch (reason) {
+            case EndCoordinatesOccupied:
+                System.out.println("The move you have attempted to make was invalid because the end coordinates were already occupied with another piece. Please try again.");
+                break;
+            case NoPieceSelected:
+                System.out.println("The move you have attempted to make was invalid because there was no piece at the starting coordinates specified. Please try again.");
+                break;
+            case EndCoordinatesOutOfRange:
+                System.out.println("The move you have attempted to make was invalid because the end coordinates specified were out of range of the starting coordinates. Please try again.");
+                break;
+            case OpponentsPieceSelected:
+                System.out.println("The move you have attempted to make was invalid because the piece you selected to move did not belong to you.");
+            default:
+                System.err.println("An enumeration not supported was passed in. Exit the program.");                
+        }
         
     }
     
-    public static void tellPlayerCaptureInvalid() {
-        
+    public static void tellPlayerCaptureInvalid(InvalidCaptureReason reason) {
+        switch (reason) {
+            case OpponentsPieceSelectedWithStartCoordinates:
+                System.out.println("The capture you have attempted to make was invalid because the start coordinates contain an opposing piece. Please try again.");
+                break;
+            case NoPieceSelected:
+                System.out.println("The capture you have attempted to make was invalid because there was no piece at the starting coordinates specified. Please try again.");
+                break;
+            case FriendlyPieceSeleectedWithEndCoordinates:
+                System.out.println("The capture you have attempted to make was invalid because the end coordinates specified contain a friendly piece. Please try again.");
+                break;
+            case NoOpponentsPieceSelected:
+                System.out.println("The capture you have attempted to make was invalid because there was no opponent's piece at the ending coordinates specified.");
+                break;
+            case CaptureDoesNotInvolveLoop:
+                System.out.println("The capture you have attempted to make was invalid because no loop is taken by the capturing piece. Please try again.");
+                break;
+            case NoLoopSequenceAvailableToReachEndCoordinates:
+                System.out.println("The capture you have attempted to make was invalid because No loop sequence allows the piece at the starting coordinates to hit the piece at the end coordinates.. Please try again.");
+                break;
+            case HitsOtherPieceBeforeReachingEndCoordinates:
+                System.out.println("No sequence of loops was found that did not make contact with another piece before hitting the coordinates entered.");
+            default:
+                System.err.println("An enumeration not supported was passed in. Exit the program.");                                                               
+        }        
     }
     
     
