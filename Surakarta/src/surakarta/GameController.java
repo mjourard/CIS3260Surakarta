@@ -1,5 +1,6 @@
 package surakarta;
 
+import java.util.HashSet;
 import java.util.Scanner;
 
 /**
@@ -243,17 +244,17 @@ public class GameController {
             selection = View.isTurnMoveOrCapture(this.turn);
             coords = View.getTurnCoordinates();
 
-            if (selection == 0) {
-                System.out.println(Integer.toString(coords[0]) + ", " + Integer.toString(coords[1]) + ", " + Integer.toString(coords[2]) + ", " + Integer.toString(coords[3]));
+            if (selection == 0) {                
                 validation = validateMove(coords[0], coords[1], coords[2], coords[3]);                
             } else {
                 validation = validateCapture(coords[0], coords[1], coords[2], coords[3]);                
+                if (validation == -1) {
+                    System.out.println("If nothing was displayed, missed a case.");
+                }
             }
         }
 
-        System.out.println("validation = " + Integer.toString(validation));
         //performing the move once validated
-        System.out.println("Setting coordinates of piece " + Integer.toString(validation) + " to row: " + Integer.toString(coords[2]) + ", column: "  + Integer.toString(coords[3]));
         boardPieces[validation].setRow(coords[2]);
         boardPieces[validation].setColumn(coords[3]);
         boardGrid[coords[0]][coords[1]] = '+';
@@ -309,15 +310,12 @@ public class GameController {
         //if the row is out of bounds
         if (endingColumn < 0 || endingColumn > 5) {
             throw new IllegalArgumentException("The endingColumn parameter was out of bounds.");            
-        }
-        
-        System.out.println("boardPieces.length = " + Integer.toString(boardPieces.length));
+        }                
 
         for (int i = 0; i < boardPieces.length; i++) {
             
             currentRow = boardPieces[i].getRow();
-            currentColumn = boardPieces[i].getColumn(); 
-            System.out.println("boardPiece " + Integer.toString(i) + " is at row: " + Integer.toString(currentRow) + ", column: " + Integer.toString(currentColumn));
+            currentColumn = boardPieces[i].getColumn();             
             if (currentRow == startingRow && currentColumn == startingColumn) {
                 chosenPiece = i;
             }
@@ -408,6 +406,10 @@ public class GameController {
         Direction nextDirection;
 
         GridDirection nextGridDirection;
+        
+        int nextColumn;
+        
+        int nextRow;                
 
         if (startingRow == endingRow && startingColumn == endingColumn) {
             return true;
@@ -421,7 +423,7 @@ public class GameController {
         switch (gridDirection) {
             case Row:
                 if (direction == Direction.Left) {
-                    while (startingColumn > 1) {
+                    while (startingColumn > 0) {
                         startingColumn--;
                         if (this.getBoardGrid()[startingRow][startingColumn] != '+') {
                             hitPiece = true;
@@ -430,7 +432,7 @@ public class GameController {
                     }
 
                 } else if (direction == Direction.Right) {
-                    while (startingColumn < 6) {
+                    while (startingColumn < 5) {
                         startingColumn++;
                         if (this.getBoardGrid()[startingRow][startingColumn] != '+') {
                             hitPiece = true;
@@ -452,7 +454,7 @@ public class GameController {
                 break;
             case Column:
                 if (direction == Direction.Up) {
-                    while (startingRow > 1) {
+                    while (startingRow > 0) {
                         startingRow--;
                         if (this.getBoardGrid()[startingRow][startingColumn] != '+') {
                             hitPiece = true;
@@ -460,7 +462,7 @@ public class GameController {
                         }
                     }
                 } else if (direction == Direction.Down) {
-                    while (startingRow < 6) {
+                    while (startingRow < 5) {
                         startingRow++;
                         if (this.getBoardGrid()[startingRow][startingColumn] != '+') {
                             hitPiece = true;
@@ -487,13 +489,54 @@ public class GameController {
             return (startingRow == endingRow && startingColumn == endingColumn);
         }
 
-        return this.doesLoopLeadToCapture(startingColumn, startingRow, endingRow, endingColumn, nextDirection, nextGridDirection);
+        /* determine which end the loop comes out of */
+        switch (direction) {
+            case Up:
+                if (nextDirection == Direction.Left) {
+                    nextRow = 5 - startingColumn;
+                    nextColumn = 5;
+                } else {
+                    nextRow = startingColumn;
+                    nextColumn = 0;
+                }
+                break;
+            case Right:
+                if (nextDirection == Direction.Up) {
+                    nextRow = 5;
+                    nextColumn = startingRow;
+                } else {
+                    nextRow = 0;
+                    nextColumn = 5 - startingRow;
+                }
+                break;
+            case Down:
+                if (nextDirection == Direction.Left) {
+                    nextRow = startingColumn;
+                    nextColumn = 5;
+                } else {
+                    nextRow = 5 - startingColumn;
+                    nextColumn = 5;
+                }
+                break;
+            case Left:
+                if (nextDirection == Direction.Up) {
+                    nextRow = 5;
+                    nextColumn = 5 - startingRow;
+                } else {
+                    nextRow = 0;
+                    nextColumn = startingRow;
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("direction was not one of Up, Right, Left or Down. Review code base.");
+        }
+        return this.doesLoopLeadToCapture(nextRow, nextColumn, endingRow, endingColumn, nextDirection, nextGridDirection);
     } /* end of doesLoopLeadToCapture */
 
 
     /**
      * Applies game logic to the proposed passed in move to determine if the
-     * capture passed in is valid or not.
+     * capture passed in is valid or not. Rows and Columns are 0-based.
      *
      * @param startingRow The row of the capturing piece.
      * @param startingColumn The column of the capturing piece.
@@ -505,6 +548,10 @@ public class GameController {
     public int validateCapture(int startingRow, int startingColumn, int endingRow, int endingColumn) {
 
         boolean innerLoopAccess;
+        
+        Direction nextDirection;
+        
+        GridDirection nextGridDirection;
 
         boolean outerLoopAccess;
 
@@ -534,7 +581,7 @@ public class GameController {
 
         //Determine if the piece at the end location is theirs
         if (this.getSideOfPiece(endingRow, endingColumn) == this.turn) {
-            View.tellPlayerCaptureInvalid(InvalidCaptureReason.FriendlyPieceSeleectedWithEndCoordinates);
+            View.tellPlayerCaptureInvalid(InvalidCaptureReason.FriendlyPieceSelectedWithEndCoordinates);
             return -1;
         }
 
@@ -552,15 +599,15 @@ public class GameController {
         sameColumn = startingColumn == endingColumn;
 
         //Determine inner loop access
-        if ((startingRow == 2 || startingRow == 5) || (startingColumn == 2 || startingColumn == 5)) {
-            if ((endingRow == 2 || endingRow == 5) || (endingColumn == 2 || endingColumn == 5)) {
+        if ((startingRow == 1 || startingRow == 4) || (startingColumn == 1 || startingColumn == 4)) {
+            if ((endingRow == 1 || endingRow == 4) || (endingColumn == 1 || endingColumn == 4)) {
                 innerLoopAccess = true;
             }
         }
 
         //Determine outer loop access
-        if ((startingRow == 3 || startingRow == 4) || (startingColumn == 3 || startingColumn == 4)) {
-            if ((endingRow == 3 || endingRow == 4) || (endingColumn == 3 || endingColumn == 4)) {
+        if ((startingRow == 2 || startingRow == 3) || (startingColumn == 2 || startingColumn == 3)) {
+            if ((endingRow == 2 || endingRow == 3) || (endingColumn == 2 || endingColumn == 3)) {
                 outerLoopAccess = true;
             }
         }
@@ -569,20 +616,34 @@ public class GameController {
             View.tellPlayerCaptureInvalid(InvalidCaptureReason.NoLoopSequenceAvailableToReachEndCoordinates);
             return -1;
         }
-
-        System.out.println("Finished the initial checks, going through the recursive algorithm.");
+        
+        /*************
+         * MOVING UP *
+         *************/
         if (!sameColumn || (sameColumn && startingRow < endingRow)) {
 
             //Start the loop one move up to avoid hitting the capturing piece in the algorithm.
-            if (startingRow == 1) {
-                passedRow = startingColumn;
-                passedColumn = startingRow;
+            
+            if (startingRow == 0) {
+                //the passedRow and passedColumns are given startingColumn and startingRow respectively when startingRow is set to 0 because they are already on a loop and are taking it.
+                if (startingColumn <= 2) {
+                    passedRow = startingColumn;
+                    passedColumn = 0;
+                    nextDirection = Direction.Right;                    
+                } else {
+                    passedRow = 5 - startingColumn;
+                    passedColumn = 5;
+                    nextDirection = Direction.Left;
+                }                
+                nextGridDirection = GridDirection.Row;
             } else {
                 passedRow = startingRow - 1;
                 passedColumn = startingColumn;
+                nextDirection = Direction.Up;
+                nextGridDirection = GridDirection.Column;
             }
 
-            if (this.doesLoopLeadToCapture(passedRow, passedColumn, endingRow, endingColumn, Direction.Up, GridDirection.Column)) {
+            if (this.doesLoopLeadToCapture(passedRow, passedColumn, endingRow, endingColumn, nextDirection, nextGridDirection)) {
                 for (BoardPiece piece : this.boardPieces) {
                     if (piece.getRow() == startingRow && piece.getColumn() == startingColumn) {
                         return piece.getId();
@@ -593,19 +654,31 @@ public class GameController {
             }
         }
 
-        System.out.println("Finished the initial checks, going through the recursive algorithm.");
+        /***************
+         * MOVING DOWN *
+         ***************/
         if (!sameColumn || (sameColumn && startingRow > endingRow)) {
 
             //Start the loop one move down to avoid hitting the capturing piece in the algorithm.
-            if (startingRow == 6) {
-                passedRow = startingColumn;
-                passedColumn = startingRow;
+            if (startingRow == 5) {
+                if (startingColumn <= 2) {
+                    nextDirection = Direction.Right;
+                    passedRow = 5 - startingColumn;
+                    passedColumn = 0;
+                } else {
+                    nextDirection = Direction.Left;
+                    passedRow = startingColumn;
+                    passedColumn = 5;
+                }
+                nextGridDirection = GridDirection.Row;
             } else {
                 passedRow = startingRow + 1;
                 passedColumn = startingColumn;
+                nextDirection = Direction.Down;
+                nextGridDirection = GridDirection.Column;
             }
 
-            if (this.doesLoopLeadToCapture(passedRow, passedColumn, endingRow, endingColumn, Direction.Down, GridDirection.Column)) {
+            if (this.doesLoopLeadToCapture(passedRow, passedColumn, endingRow, endingColumn, nextDirection, nextGridDirection)) {
                 for (BoardPiece piece : this.boardPieces) {
                     if (piece.getRow() == startingRow && piece.getColumn() == startingColumn) {
                         return piece.getId();
@@ -616,19 +689,31 @@ public class GameController {
             }
         }
 
-        System.out.println("Finished the initial checks, going through the recursive algorithm.");
+        /****************
+         * MOVING RIGHT *
+         ****************/
         if (!sameRow || (sameRow && startingColumn > endingColumn)) {
 
             //Start the loop one move down to avoid hitting the capturing piece in the algorithm.
-            if (startingColumn == 6) {
-                passedRow = startingColumn;
-                passedColumn = startingRow;
+            if (startingColumn == 5) {
+                if (startingRow <= 2) {
+                    passedRow = 0;
+                    passedColumn = 5 - startingRow;
+                    nextDirection = Direction.Down;                    
+                } else {
+                    passedRow = 5;
+                    passedColumn = startingRow;
+                    nextDirection = Direction.Up;
+                }
+                nextGridDirection = GridDirection.Column;
             } else {
                 passedRow = startingRow;
                 passedColumn = startingColumn + 1;
+                nextDirection = Direction.Right;
+                nextGridDirection = GridDirection.Row;
             }
 
-            if (this.doesLoopLeadToCapture(passedRow, passedColumn, endingRow, endingColumn, Direction.Right, GridDirection.Row)) {
+            if (this.doesLoopLeadToCapture(passedRow, passedColumn, endingRow, endingColumn, nextDirection, nextGridDirection)) {
                 for (BoardPiece piece : this.boardPieces) {
                     if (piece.getRow() == startingRow && piece.getColumn() == startingColumn) {
                         return piece.getId();
@@ -639,19 +724,31 @@ public class GameController {
             }
         }
 
-        System.out.println("Finished the initial checks, going through the recursive algorithm.");
+        /***************
+         * MOVING LEFT *
+         ***************/
         if (!sameRow || (sameRow && startingColumn < endingColumn)) {
 
             //Start the loop one move down to avoid hitting the capturing piece in the algorithm.
-            if (startingColumn == 1) {
-                passedRow = startingColumn;
-                passedColumn = startingRow;
+            if (startingColumn == 0) {
+                if (startingRow <= 2) {
+                    passedRow = 0;
+                    passedColumn = startingRow;
+                    nextDirection = Direction.Down;
+                } else {
+                    passedRow = 5;
+                    passedColumn = 5 - startingRow;
+                    nextDirection = Direction.Up;
+                }
+                nextGridDirection = GridDirection.Column;                
             } else {
                 passedRow = startingRow;
                 passedColumn = startingColumn - 1;
+                nextDirection = Direction.Left;
+                nextGridDirection = GridDirection.Row;
             }
 
-            if (this.doesLoopLeadToCapture(passedRow, passedColumn, endingRow, endingColumn, Direction.Left, GridDirection.Row)) {
+            if (this.doesLoopLeadToCapture(passedRow, passedColumn, endingRow, endingColumn, nextDirection, nextGridDirection)) {
                 for (BoardPiece piece : this.boardPieces) {
                     if (piece.getRow() == startingRow && piece.getColumn() == startingColumn) {
                         return piece.getId();
@@ -664,7 +761,6 @@ public class GameController {
             }
         }
         
-        System.out.println("Reached the end of the method somehow...");
         return -1;
     }
 
@@ -697,6 +793,10 @@ public class GameController {
         return -1;
     }
 
+    /**
+     * 
+     * @param args 
+     */
     public static void main(String[] args) {
 
         String userMenuChoice = "default";						//The players' menu choice 
@@ -768,6 +868,11 @@ public class GameController {
                 surakarta = new GameController(6, 6, 1, totalGames);
                 surakarta.resetBoardState();
                 surakarta.turn = Side.Pebbles;
+                
+                /* //Uncomment this section of code to test the validateCapture method 
+                //Testing validateCapture
+                surakarta.testValidateCapture();
+                */
                                 
                 while (surakarta.isGameOver() == -1) {
                     surakarta.executePlayerTurn();
@@ -783,6 +888,221 @@ public class GameController {
             else {
                 System.err.println("Invalid choice: " + userMenuChoice);
             }
+        }
+    } /* end of main */
+    
+    /**
+     * A method used to test the validateCapture method. Written in haste, this would need to be redone if a redesign was ever done as it relies on a lot of cheating to test quickly.
+     */
+    private void testValidateCapture() {                
+        /******************/
+        /* NEGATIVE CASES */
+        /******************/
+        
+        /* Pass in start coordinates where there is no piece */
+        this.resetBoardState();
+        System.out.println("Beginning test for 'Pass in start coordinates where there is no piece' test.");
+        if (this.validateCapture(2,2,3,3) != -1) {
+            System.out.println("Failed the 'Pass in start coordinates where there is no piece' test.");
+        }
+        
+        
+        
+        /* Pass in start coordinates where an opposing piece exists */
+        System.out.println("Beginning test for 'Pass in start coordinates where an opposing piece exists' test.");
+        if (this.validateCapture(4,0,3,3) != -1) {
+            System.out.println("Failed the 'Pass in start coordinates where an opposing piece exists' test.");
+        }
+        
+        /* Pass in end coordinates where there is no piece */
+        System.out.println("Beginning test for 'Pass in end coordinates where there is no piece' test.");
+        if (this.validateCapture(0,1,3,3) != -1) {
+            System.out.println("Failed the 'Pass in end coordinates where there is no piece' test.");
+        }
+        
+        /* Pass in end coordinates where there is a friendly piece */
+        System.out.println("Beginning test for 'Pass in end coordinates where there is a friendly piece' test.");
+        if (this.validateCapture(0,1,0,3) != -1) {
+            System.out.println("Failed the 'Pass in end coordinates where there is a friendly piece' test.");
+        }
+        
+        /*** SCENARIOS WHERE THE START COORDINATES HAVE A FRIENDLY PIECE AND THE END COORDINATES HAVE AN OPPOSING PIECE ***/
+        
+        /* The friendly piece is on a different loop than the enemy piece and hits a different piece */
+        /* will use friendly piece at row 2, column 2 as well as row 3, column 3 and enemy piece at row 4, column 1 */        
+        System.out.println("Beginning test for 'The friendly piece is on a different loop than the enemy piece and hits a different piece' test.");
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                if (i == 2 && j == 2) {
+                    boardGrid[i][j] = 'P';
+                } else if (i == 3 && j == 3) {
+                    boardGrid[i][j] = 'P';
+                } else if (i == 4 && j == 1) {
+                    boardGrid[i][j] = 'S';                                    
+                } else {
+                    boardGrid[i][j] = '+';
+                }
+            }
+        }
+        
+        for (BoardPiece piece : boardPieces) {
+            
+            piece.setRow(-1);
+            piece.setColumn(-1);                
+            
+        }
+        
+        boardPieces[0].setRow(2);
+        boardPieces[0].setColumn(2);
+        
+        boardPieces[1].setRow(3);
+        boardPieces[1].setColumn(3);
+        
+        boardPieces[boardPieces.length - 1].setRow(4);
+        boardPieces[boardPieces.length - 1].setColumn(1);
+        
+        if (this.validateCapture(1,0,5,2) != -1) {
+            System.out.println("Failed the 'The friendly piece is on a different loop than the enemy piece and hits a different piece' test.");
+        }
+        
+        /* The friendly piece is on a different loop than the enemy piece and hits itself in a full loop */        
+        /* will use friendly piece at row 2, column 2 as well as row 3, column 3 and enemy piece at row 4, column 1 */        
+        System.out.println("Beginning test for 'The friendly piece is on a different loop than the enemy piece and hits itself in a full loop' test.");
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                if (i == 2 && j == 2) {
+                    boardGrid[i][j] = 'P';                
+                } else if (i == 4 && j == 1) {
+                    boardGrid[i][j] = 'S';                                    
+                } else {
+                    boardGrid[i][j] = '+';
+                }
+            }
+        }
+        
+        for (BoardPiece piece : boardPieces) {
+            
+            piece.setRow(-1);
+            piece.setColumn(-1);                
+            
+        }
+        
+        boardPieces[0].setRow(2);
+        boardPieces[0].setColumn(2);                
+        
+        boardPieces[boardPieces.length - 1].setRow(4);
+        boardPieces[boardPieces.length - 1].setColumn(1);
+                
+        if (this.validateCapture(1,0,5,2) != -1) {
+            System.out.println("Failed the 'The friendly piece is on a different loop than the enemy piece and hits itself in a full loop' test.");
+        }                
+        
+        /* The friendly piece is surrounded and cannot reach a loop */
+        /* will use friendly pieces at (row, column): (2,2), (2,1), (1,2), (2,3), (3,2) and enemy piece at row 4, column 1 */        
+        System.out.println("Beginning test for 'The friendly piece is surrounded and cannot reach a loop' test.");
+        this.resetBoardState();
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {                
+                boardGrid[i][j] = '+';                
+            }
+        }
+        
+        boardGrid[2][2] = 'P';
+        boardGrid[2][1] = 'P';
+        boardGrid[1][2] = 'P';
+        boardGrid[2][3] = 'P';
+        boardGrid[3][2] = 'P';
+        boardGrid[4][1] = 'S';
+        
+        for (BoardPiece piece : boardPieces) {
+            
+            piece.setRow(-1);
+            piece.setColumn(-1);                
+            
+        }
+        
+        boardPieces[0].setRow(2);
+        boardPieces[0].setColumn(2);                
+        
+        boardPieces[1].setRow(2);
+        boardPieces[1].setColumn(1);                
+        
+        boardPieces[2].setRow(1);
+        boardPieces[2].setColumn(2);                
+        
+        boardPieces[3].setRow(2);
+        boardPieces[3].setColumn(3);                
+        
+        boardPieces[4].setRow(3);
+        boardPieces[4].setColumn(2);                                
+        
+        boardPieces[boardPieces.length - 1].setRow(4);
+        boardPieces[boardPieces.length - 1].setColumn(1);
+        
+        if (this.validateCapture(1,0,5,2) != -1) {
+            System.out.println("Failed the 'The friendly piece is surrounded and cannot reach a loop' test.");
+        }                
+        
+        
+        /* The friendly piece can't reach a loop but has a straight shot at the enemy piece. */
+        /* Will use basic setup for this */
+        System.out.println("Beginning test for 'The friendly piece can't reach a loop but has a straight shot at the enemy piece' test.");
+        this.resetBoardState();
+        if (this.validateCapture(1,3,4,3) != -1) {
+            System.out.println("Failed the 'The friendly piece can't reach a loop but has a straight shot at the enemy piece.' test.");
+        }
+        
+        /******************/
+        /* POSITIVE CASES */
+        /******************/
+        
+        /* passes through one loop to get to the end piece */
+        /* Will use a friendly piece at (1,1) and (2,1) and an enemy piece at (2,4) */
+        System.out.println("Beginning test for 'passes through one loop to get to the end piece' test.");
+        this.resetBoardState();
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {                
+                boardGrid[i][j] = '+';                
+            }
+        }
+        
+        boardGrid[1][1] = 'P';
+        boardGrid[2][1] = 'P';        
+        boardGrid[2][4] = 'S';
+        
+        for (BoardPiece piece : boardPieces) {
+            
+            piece.setRow(-1);
+            piece.setColumn(-1);                
+            
+        }
+        
+        boardPieces[0].setRow(1);
+        boardPieces[0].setColumn(1);                
+        
+        boardPieces[1].setRow(2);
+        boardPieces[1].setColumn(1);                                
+        
+        boardPieces[boardPieces.length - 1].setRow(2);
+        boardPieces[boardPieces.length - 1].setColumn(4);
+        
+        System.out.println("Beginning the 'passes through one loop to get to the end piece' test.");
+        if (validateCapture(1,1,2,4) == -1) {
+            System.out.println("Failed the 'passes through one loop to get to the end piece' test.");
+        }
+        
+        /* passes through three loops to get to the end piece */
+        /* will move the enemy piece from the last test to (4,1) */
+        System.out.println("Beginning test for 'passes through three loops to get to the end piece' test.");
+        boardGrid[2][4] = '+';
+        boardGrid[4][1] = 'S';
+        
+        boardPieces[boardPieces.length - 1].setRow(4);
+        boardPieces[boardPieces.length - 1].setColumn(1);
+        
+        System.out.println("Beginning the 'passes through three loops to get to the end piece' test.");
+        if (validateCapture(1,1,4,1) == -1) {
+            System.out.println("Failed the 'passes through three loops to get to the end piece' test.");
         }
     }
 

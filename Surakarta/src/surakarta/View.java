@@ -57,14 +57,7 @@ public class View {
         
         displayBoard = new char[boardHeight][boardWidth];
         
-        stringDisplayBoard = new String[29];
-        
-        for (int x = 0; x < 6; x++) {
-            for (int y = 0; y < 6; y++) {
-                System.out.print("[" + bg[x][y] + "]");
-            }
-            System.out.println("");
-        }
+        stringDisplayBoard = new String[29];                
                        
         
         stringDisplayBoard[boardRowIndex] = " ____________    ____________ ";
@@ -351,7 +344,7 @@ public class View {
             case NoPieceSelected:
                 System.out.println("The capture you have attempted to make was invalid because there was no piece at the starting coordinates specified. Please try again.");
                 break;
-            case FriendlyPieceSeleectedWithEndCoordinates:
+            case FriendlyPieceSelectedWithEndCoordinates:
                 System.out.println("The capture you have attempted to make was invalid because the end coordinates specified contain a friendly piece. Please try again.");
                 break;
             case NoOpponentsPieceSelected:
@@ -361,7 +354,7 @@ public class View {
                 System.out.println("The capture you have attempted to make was invalid because no loop is taken by the capturing piece. Please try again.");
                 break;
             case NoLoopSequenceAvailableToReachEndCoordinates:
-                System.out.println("The capture you have attempted to make was invalid because No loop sequence allows the piece at the starting coordinates to hit the piece at the end coordinates.. Please try again.");
+                System.out.println("The capture you have attempted to make was invalid because No loop sequence allows the piece at the starting coordinates to hit the piece at the end coordinates. Please try again.");
                 break;
             case HitsOtherPieceBeforeReachingEndCoordinates:
                 System.out.println("No sequence of loops was found that did not make contact with another piece before hitting the coordinates entered.");

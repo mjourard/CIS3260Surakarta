@@ -14,7 +14,7 @@ public enum InvalidCaptureReason {
     NoPieceSelected,
     NoOpponentsPieceSelected,
     OpponentsPieceSelectedWithStartCoordinates,
-    FriendlyPieceSeleectedWithEndCoordinates,
+    FriendlyPieceSelectedWithEndCoordinates,
     CaptureDoesNotInvolveLoop,
     NoLoopSequenceAvailableToReachEndCoordinates,
     HitsOtherPieceBeforeReachingEndCoordinates
